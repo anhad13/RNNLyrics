@@ -39,44 +39,14 @@ for i in range(0, len(token_list) - max_len, step):
     outputs.append(token_list[i+max_len])
 
 
-
-
-# In[7]:
-
 print inputs
 
-
-# In[8]:
-
 print outputs
-
-
-# We also need to map each character to a label and create a reverse mapping to use later:
-
-# In[17]:
 
 token_labels = {ch:i for i, ch in enumerate(unique_tokens_list)}
 labels_token = {i:ch for i, ch in enumerate(unique_tokens_list)}
 
 
-# In[18]:
-
-print token_labels
-
-
-# In[8]:
-
-print labels_token
-
-
-# Now we can start constructing our numerical input 3-tensor and output matrix. Each input example (i.e. a sequence of characters) is turned into a matrix of one-hot vectors; that is, a bunch of vectors where the index corresponding to the character is set to 1 and all the rest are set to zero.
-#
-# For example, if we have the following:
-
-# In[14]:
-
-# assuming max_len = 7
-# so our examples have 7 characters
 example = 'cab dab'
 example_char_labels = {
     'a': 0,
@@ -97,23 +67,14 @@ for i, example in enumerate(inputs):
     y[i, token_labels[outputs[i]]] = 1
 
 
-# Now that we have our training data, we can start training. Keras also makes this easy:
 
-# In[ ]:
 
-# more epochs is usually better, but training can be very slow if not on a GPU
 model_rnn.fit(X, y, batch_size=len(inputs), nb_epoch=epochs)
-
-
-# It's much more fun to see your network's ramblings as it's training, so let's write a function to produce text from the network:
-
-# In[20]:
 
 def generate(temperature=0.35, seed=None, predicate=lambda x: len(x) < 100):
     if seed is not None and len(seed) < max_len:
         raise Exception('Seed text must be at least {} chars long'.format(max_len))
 
-    # if no seed text is specified, randomly select a chunk of text
     else:
         start_idx = random.randint(0, len(text) - max_len - 1)
         seed = text[start_idx:start_idx + max_len]
